@@ -1,4 +1,4 @@
-package com.wooruk.donnaenwa.dto;
+package com.wooruk.donnaenwa.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
