@@ -6,6 +6,7 @@ import com.wooruk.donnaenwa.domain.entity.Post;
 import com.wooruk.donnaenwa.domain.repository.CategoryRepository;
 import com.wooruk.donnaenwa.domain.repository.MemberRepository;
 import com.wooruk.donnaenwa.domain.repository.post.PostRepository;
+import com.wooruk.donnaenwa.dto.post.PostCreateRequest;
 import com.wooruk.donnaenwa.dto.post.PostListRequest;
 import com.wooruk.donnaenwa.dto.post.PostListResponse;
 import com.wooruk.donnaenwa.dto.post.PostResponseListDto;
@@ -62,7 +63,7 @@ public class PostServiceImpl implements PostService{
   }
 
   @Override
-  public Post createPost() {
+  public Post createPost(PostCreateRequest req) {
     Long memberId = jwtTokenProvider.getCurrentUserPk();
 
     if (memberId == null) {
@@ -70,13 +71,13 @@ public class PostServiceImpl implements PostService{
     }
 
     Member member = memberRepository.findById(memberId).orElseThrow();
-    Category category = categoryRepository.findById(1).orElseThrow();
+    Category category = categoryRepository.findById(req.getCategoryId()).orElseThrow();
 
     Post post = Post.builder()
         .member(member)
         .category(category)
-        .title("")
-        .content("")
+        .title(req.getTitle())
+        .content(req.getContent())
         .build();
 
     postRepository.save(post);

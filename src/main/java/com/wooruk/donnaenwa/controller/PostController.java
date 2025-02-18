@@ -2,6 +2,7 @@ package com.wooruk.donnaenwa.controller;
 
 import com.wooruk.donnaenwa.domain.entity.Post;
 import com.wooruk.donnaenwa.domain.service.post.PostService;
+import com.wooruk.donnaenwa.dto.post.PostCreateRequest;
 import com.wooruk.donnaenwa.dto.post.PostListRequest;
 import com.wooruk.donnaenwa.dto.post.PostListResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,12 @@ public class PostController {
     return ResponseEntity.ok(res);
   }
 
-  public ResponseEntity<Post> post () {
-    Post createdPost = postService.createPost();
+  public ResponseEntity<Post> post (PostCreateRequest postCreateRequest) {
+    Post createdPost = postService.createPost(postCreateRequest);
+
+    if (createdPost == null) {
+      return ResponseEntity.badRequest().build();
+    }
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}")
