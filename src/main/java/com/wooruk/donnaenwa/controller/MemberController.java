@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -23,31 +24,27 @@ public class MemberController {
   private final JwtTokenProvider jwtTokenProvider;
 
   @GetMapping("/hello")
+  @PreAuthorize("hasRole('USER')")
   public String getHello () {
     return  "helloToMyGirl";
   }
 
   @PostMapping("/join")
   public ResponseEntity<JoinResponse> join (@Valid @RequestBody JoinRequest joinRequest) {
-    log.debug ( "LoginRequestDto = {}", joinRequest);
-
     JoinRequestStatus message = memberService.join(joinRequest);
 
-    JoinResponse joinResponse = null;
-
     if (message.equals(JoinRequestStatus.USER_CREATED)) {
-      joinResponse = new JoinResponse(message.name());
+      JoinResponse joinResponse = new JoinResponse(message.name());
       return ResponseEntity.ok(joinResponse);
     }
-    joinResponse = new JoinResponse(message.name());
+    JoinResponse joinResponse = new JoinResponse(message.name());
     return ResponseEntity.badRequest().body(joinResponse);
   }
 
   @PostMapping ("/login")
   public ResponseEntity<LoginResponse> login (@Valid @RequestBody LoginRequest loginRequest) {
     Member member = memberService.login(loginRequest);
-
-    String token = jwtTokenProvider.generateToken (member.getMembername(), member.getRoles());
+    String token = jwtTokenProvider.generateToken (member);
     LoginResponse loginResponse = new LoginResponse(member.getMembername(), token);
     return ResponseEntity.ok(loginResponse);
   }

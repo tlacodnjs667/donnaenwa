@@ -1,12 +1,7 @@
 package com.wooruk.donnaenwa.security;
 
-import com.wooruk.donnaenwa.DonnaenwaApplication;
 import com.wooruk.donnaenwa.domain.entity.Member;
-import com.wooruk.donnaenwa.domain.entity.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class DonnaenwaUserDetails implements UserDetails {
 
+  @Getter
   private Long id;
   private String username;
   private String phoneNumber;
@@ -70,4 +66,5 @@ public class DonnaenwaUserDetails implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+
 }

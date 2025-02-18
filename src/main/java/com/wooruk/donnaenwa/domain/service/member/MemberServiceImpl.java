@@ -41,7 +41,6 @@ public class MemberServiceImpl implements MemberService {
         .password(passwordEncoder.encode(joinRequest.getPassword()))
         .phoneNumber(joinRequest.getPhoneNumber()).email(joinRequest.getEmail()).build();
 
-    log.debug("member = {}", member);
 
     memberRepository.save(member);
     return JoinRequestStatus.USER_CREATED;
@@ -51,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
   public Member login(LoginRequest loginRequest) {
     Member member = memberRepository.findByMembername(loginRequest.getUsername())
         .orElseThrow(() -> new UsernameNotFoundException("USERNAME_NOT_FOUND"));
-
+    log.debug("member = {}", member);
     if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
       throw new BadCredentialsException("NOT_MATCH_PASSWORD");
     }

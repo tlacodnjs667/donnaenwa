@@ -2,16 +2,21 @@ package com.wooruk.donnaenwa.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
-public class Member {
+@ToString
+public class Member implements Persistable<Long> {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
@@ -42,5 +47,10 @@ public class Member {
       roles = new HashSet<>();
     }
     roles.add(Role.USER);
+  }
+
+  @Override
+  public boolean isNew() {
+    return this.id == null;
   }
 }
