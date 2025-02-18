@@ -1,19 +1,16 @@
 package com.wooruk.donnaenwa.domain.service;
 
 import com.wooruk.donnaenwa.controller.JoinRequestStatus;
-import com.wooruk.donnaenwa.dto.JoinRequest;
+import com.wooruk.donnaenwa.dto.member.JoinRequest;
 import com.wooruk.donnaenwa.domain.repository.MemberRepository;
 import com.wooruk.donnaenwa.domain.entity.Member;
-import com.wooruk.donnaenwa.dto.LoginRequestDto;
+import com.wooruk.donnaenwa.dto.member.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 @Slf4j
