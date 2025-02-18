@@ -1,10 +1,10 @@
-package com.wooruk.donnaenwa.domain.service;
+package com.wooruk.donnaenwa.domain.service.member;
 
 import com.wooruk.donnaenwa.controller.JoinRequestStatus;
 import com.wooruk.donnaenwa.dto.member.JoinRequest;
 import com.wooruk.donnaenwa.domain.repository.MemberRepository;
 import com.wooruk.donnaenwa.domain.entity.Member;
-import com.wooruk.donnaenwa.dto.member.LoginRequestDto;
+import com.wooruk.donnaenwa.dto.member.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -48,7 +48,7 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public Member login(LoginRequestDto loginRequest) {
+  public Member login(LoginRequest loginRequest) {
     Member member = memberRepository.findByMembername(loginRequest.getUsername())
         .orElseThrow(() -> new UsernameNotFoundException("USERNAME_NOT_FOUND"));
 

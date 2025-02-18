@@ -2,8 +2,9 @@ package com.wooruk.donnaenwa.controller;
 
 import com.wooruk.donnaenwa.domain.entity.Member;
 import com.wooruk.donnaenwa.dto.member.JoinRequest;
-import com.wooruk.donnaenwa.domain.service.MemberService;
-import com.wooruk.donnaenwa.dto.member.LoginRequestDto;
+import com.wooruk.donnaenwa.domain.service.member.MemberService;
+import com.wooruk.donnaenwa.dto.member.JoinResponse;
+import com.wooruk.donnaenwa.dto.member.LoginRequest;
 import com.wooruk.donnaenwa.dto.member.LoginResponse;
 import com.wooruk.donnaenwa.security.jwt.JwtTokenProvider;
 import jakarta.validation.Valid;
@@ -27,20 +28,23 @@ public class MemberController {
   }
 
   @PostMapping("/join")
-  public ResponseEntity<String> join (@Valid @RequestBody JoinRequest joinRequest) {
+  public ResponseEntity<JoinResponse> join (@Valid @RequestBody JoinRequest joinRequest) {
     log.debug ( "LoginRequestDto = {}", joinRequest);
 
     JoinRequestStatus message = memberService.join(joinRequest);
 
-    if (message.equals(JoinRequestStatus.USER_CREATED)) {
-      return ResponseEntity.ok(message.name());
-    }
+    JoinResponse joinResponse = null;
 
-    return ResponseEntity.badRequest().body(message.name());
+    if (message.equals(JoinRequestStatus.USER_CREATED)) {
+      joinResponse = new JoinResponse(message.name());
+      return ResponseEntity.ok(joinResponse);
+    }
+    joinResponse = new JoinResponse(message.name());
+    return ResponseEntity.badRequest().body(joinResponse);
   }
 
   @PostMapping ("/login")
-  public ResponseEntity<LoginResponse> login (@Valid @RequestBody LoginRequestDto loginRequest) {
+  public ResponseEntity<LoginResponse> login (@Valid @RequestBody LoginRequest loginRequest) {
     Member member = memberService.login(loginRequest);
 
     String token = jwtTokenProvider.generateToken (member.getMembername(), member.getRoles());
