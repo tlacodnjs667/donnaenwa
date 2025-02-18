@@ -35,3 +35,41 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+replay_pid*
+
+### Logs ###
+logs/
+*.log
+**/log/
+**/logs/
+
+### Spring Boot ###
+*.properties
+*.yml
+*.yaml
+.env
+**/application-*.properties
+**/application-*.yml
+**/application-*.yaml
+target/
+
+### Lombok ###
+.lombok/
+
+### Temporary files ###
+*.swp
+*.swo
+*~
+
+### OS-specific ###
+.DS_Store
+Thumbs.db
