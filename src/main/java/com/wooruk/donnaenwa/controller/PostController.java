@@ -2,6 +2,7 @@ package com.wooruk.donnaenwa.controller;
 
 import com.wooruk.donnaenwa.domain.service.post.PostService;
 import com.wooruk.donnaenwa.dto.post.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class PostController {
 
   @PostMapping
   @PreAuthorize("hasRole('USER')")
-  public ResponseEntity<PostResponseDto> post (@RequestBody PostCreateRequest postCreateRequest)
+  public ResponseEntity<PostResponseDto> post (@Valid @RequestBody PostCreateRequest postCreateRequest)
       throws AccessDeniedException {
     PostResponseDto createdPost = postService.createPost(postCreateRequest);
 
@@ -51,7 +52,7 @@ public class PostController {
 
   @PutMapping("/{postId}")
   @PreAuthorize("hasRole('USER')")
-  public ResponseEntity<PostResponseDto> putPost (@PathVariable Long postId, @RequestBody PostPatchRequest postPatchRequest) {
+  public ResponseEntity<PostResponseDto> putPost (@PathVariable Long postId, @Valid @RequestBody PostPatchRequest postPatchRequest) {
     PostResponseDto postUpdated = postService.updatePost(postId, postPatchRequest);
     return ResponseEntity.ok(postUpdated);
   }

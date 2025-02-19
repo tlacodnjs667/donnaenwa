@@ -1,24 +1,17 @@
 package com.wooruk.donnaenwa.dto.post;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@JsonDeserialize(builder = PostPatchRequest.PostPatchRequestBuilder.class)
 public class PostPatchRequest {
+  @NotBlank(message = "TITLE_REQUIRED")
+  private String title;
 
-  @Setter
-  @Builder.Default
-  private Long postId = null;
-
-  @Builder.Default
-  private String title="";
-
-  @Builder.Default
-  private String content="";
-
+  @NotBlank(message = "CONTENT_REQUIRED")
+  private String content;
 }
