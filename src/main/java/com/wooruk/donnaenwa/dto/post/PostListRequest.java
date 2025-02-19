@@ -18,10 +18,10 @@ public class PostListRequest {
   private Integer count = 15;
 
   @Builder.Default
-  private String search_keyword = "";
+  private String keyword = "";
 
   @Builder.Default
-  private Integer curPage = 0;
+  private Integer page = 0;
 
   @Builder.Default
   private String order = "createdTimeASC";

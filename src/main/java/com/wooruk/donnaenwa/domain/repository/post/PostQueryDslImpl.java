@@ -24,12 +24,12 @@ public class PostQueryDslImpl extends QuerydslRepositorySupport implements PostQ
     BooleanBuilder bool = new BooleanBuilder();
 
 //    PostListRequest. search Keyword
-    bool.and(post.title.containsIgnoreCase(postListRequest.getSearch_keyword()));
-    bool.or(post.content.containsIgnoreCase(postListRequest.getSearch_keyword()));
+    bool.and(post.title.containsIgnoreCase(postListRequest.getKeyword()));
+    bool.or(post.content.containsIgnoreCase(postListRequest.getKeyword()));
 
     query.where(bool);
 
-    Pageable pageable = PageRequest.of(postListRequest.getCurPage(), postListRequest.getCount(), Sort.Direction.ASC, "id");
+    Pageable pageable = PageRequest.of(postListRequest.getPage(), postListRequest.getCount(), Sort.Direction.ASC, "id");
 
     Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query);
     List<Post> posts = query.fetch();

@@ -1,5 +1,6 @@
 package com.wooruk.donnaenwa.dto.post;
 
+import com.wooruk.donnaenwa.domain.entity.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,11 +10,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Getter
-public class PostResponseListDto {
+public class PostResponseDto {
   private Long id;
   private String membername;
-  private String categoryName;
+  private Category category;
   private String title;
+  private String content;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private Boolean isEditable;
