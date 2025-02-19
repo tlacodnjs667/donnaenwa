@@ -5,6 +5,7 @@ import com.wooruk.donnaenwa.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,7 +37,9 @@ public class SecurityConfig {
         .headers(headers->headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         .authorizeHttpRequests(auth ->
           auth.requestMatchers("/", "/h2-console/**", "/member/login", "/member/join").permitAll()
-              .anyRequest().permitAll()
+              .requestMatchers(HttpMethod.POST, "/post").permitAll()
+              .anyRequest().authenticated()
+
         )
 
         .csrf(AbstractHttpConfigurer::disable)
