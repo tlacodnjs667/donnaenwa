@@ -56,4 +56,11 @@ public class PostController {
     PostResponseDto postUpdated = postService.updatePost(postId, postPatchRequest);
     return ResponseEntity.ok(postUpdated);
   }
+
+  @DeleteMapping("/{postId}")
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<Void> deletePost (@PathVariable Long postId) {
+    postService.deletePost(postId);
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
   private final PostRepository postRepository;
 
@@ -36,10 +36,7 @@ public class PostServiceImpl implements PostService{
     Page<PostResponseListDto> postList = posts.map(this::convertToListDto);
     List<Category> categories = categoryRepository.findAll();
 
-    return PostListResponse.builder()
-        .posts(postList)
-        .categories(categories)
-        .build();
+    return PostListResponse.builder().posts(postList).categories(categories).build();
   }
 
 
@@ -47,21 +44,12 @@ public class PostServiceImpl implements PostService{
   public PostResponseDto createPost(PostCreateRequest req) throws AccessDeniedException {
 
     Long memberId = jwtTokenProvider.getCurrentUserPk();
-
-    if (memberId == null) {
-      throw new AccessDeniedException("LOGIN_BEFORE_CREATION");
-    }
-
     Member member = memberRepository.findById(memberId).orElseThrow();
     Category category = categoryRepository.findById(req.getCategoryId()).orElseThrow();
 
 
-    Post post = Post.builder()
-        .member(member)
-        .category(category)
-        .title(req.getTitle())
-        .content(req.getContent())
-        .build();
+    Post post = Post.builder().member(member).category(category).title(req.getTitle())
+        .content(req.getContent()).build();
 
     boolean isOwnerOfContent = post.getMember().getId().equals(memberId);
     postRepository.save(post);
@@ -75,26 +63,22 @@ public class PostServiceImpl implements PostService{
 
     Post post = postRepository.findById(postId).orElseThrow();
 
-    boolean
-        isOwnerOfContent = memberId != null ? post.getMember().getId().equals(memberId) : Boolean.FALSE;
+    boolean isOwnerOfContent =
+        memberId != null ? post.getMember().getId().equals(memberId) : Boolean.FALSE;
 
     return this.convertToResponseDto(post, isOwnerOfContent);
   }
 
   @Override
-  public PostResponseDto updatePost(Long postId, PostPatchRequest req) throws AccessDeniedException {
+  public PostResponseDto updatePost(Long postId, PostPatchRequest req)
+      throws AccessDeniedException {
     Long memberId = jwtTokenProvider.getCurrentUserPk();
-
-    if (memberId == null) {
-      throw new AccessDeniedException("NO_SINGED_USER");
-    }
-
     Post postToUpdate = postRepository.findById(postId).orElseThrow();
 
     boolean isOwnerOfContent = postToUpdate.getMember().getId().equals(memberId);
 
     if (!isOwnerOfContent) {
-      throw new AccessDeniedException("NO_OWNER");
+      throw new AccessDeniedException("NOT_OWNER");
     }
 
     postToUpdate.updateTitle(req.getTitle());
@@ -105,35 +89,36 @@ public class PostServiceImpl implements PostService{
     return this.convertToResponseDto(postToUpdate, isOwnerOfContent);
   }
 
-  private PostResponseDto convertToResponseDto (Post post, boolean isOwner) {
-    return  PostResponseDto.builder()
-        .id(post.getId())
-        .membername(post.getMember().getMembername())
-        .category(post.getCategory())
-        .title(post.getTitle())
-        .content(post.getContent())
-        .createdAt(post.getCreatedAt())
-        .updatedAt(post.getUpdatedAt())
-        .isEditable(isOwner)
-        .isDeletable(isOwner)
-        .build();
+  @Override
+  public void deletePost(Long postId) throws AccessDeniedException {
+    Long memberId = jwtTokenProvider.getCurrentUserPk();
+    Post post = postRepository.findById(postId).orElseThrow();
+
+    if (!post.getMember().getId().equals(memberId)) {
+      throw new AccessDeniedException("NOT_OWNER");
+    }
+
+    postRepository.delete(post);
   }
 
-  private PostResponseListDto convertToListDto (Post post) {
+  private PostResponseDto convertToResponseDto(Post post, boolean isOwner) {
+    return PostResponseDto.builder().id(post.getId()).membername(post.getMember().getMembername())
+        .category(post.getCategory()).title(post.getTitle()).content(post.getContent())
+        .createdAt(post.getCreatedAt()).updatedAt(post.getUpdatedAt()).isEditable(isOwner)
+        .isDeletable(isOwner).build();
+  }
+
+  private PostResponseListDto convertToListDto(Post post) {
 
     Long memberId = jwtTokenProvider.getCurrentUserPk();
-    Boolean isOwnerOfContent = memberId != null ? post.getMember().getId().equals(memberId) : Boolean.FALSE;
+    Boolean isOwnerOfContent =
+        memberId != null ? post.getMember().getId().equals(memberId) : Boolean.FALSE;
 
-    return PostResponseListDto.builder()
-        .id(post.getId())
+    return PostResponseListDto.builder().id(post.getId())
         .membername(post.getMember().getMembername())
-        .categoryName(post.getCategory().getCategoryName())
-        .title(post.getTitle())
-        .createdAt(post.getCreatedAt())
-        .updatedAt(post.getUpdatedAt())
-        .isEditable(isOwnerOfContent)
-        .isDeletable(isOwnerOfContent)
-        .build();
+        .categoryName(post.getCategory().getCategoryName()).title(post.getTitle())
+        .createdAt(post.getCreatedAt()).updatedAt(post.getUpdatedAt()).isEditable(isOwnerOfContent)
+        .isDeletable(isOwnerOfContent).build();
 
   }
 }
