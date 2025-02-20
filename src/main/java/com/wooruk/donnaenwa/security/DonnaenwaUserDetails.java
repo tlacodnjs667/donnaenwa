@@ -17,17 +17,13 @@ public class DonnaenwaUserDetails implements UserDetails {
   @Getter
   private Long id;
   private String username;
-  private String phoneNumber;
-  private String email;
   private final String password;
   private final Set<GrantedAuthority> authorities;
 
   public DonnaenwaUserDetails (Member member) {
      this.id = member.getId();
      this.username = member.getMembername();
-     this.phoneNumber = member.getPhoneNumber();
      this.password = member.getPassword();
-     this.email = member.getEmail();
      this.authorities = member.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
          .collect(Collectors.toSet());
   }
