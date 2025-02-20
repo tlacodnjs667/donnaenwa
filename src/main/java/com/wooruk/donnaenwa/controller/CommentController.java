@@ -40,9 +40,15 @@ public class CommentController {
     return ResponseEntity.created(uri).body(comment);
   }
 
-  @PatchMapping
-  public ResponseEntity<CommentDto> updateComment (CommentUpdateRequest req) {
-    CommentDto commentUpdated = commentService.updateComment(req);
+  @PatchMapping("/{commentId}")
+  public ResponseEntity<CommentDto> updateComment (@PathVariable Long commentId, CommentUpdateRequest req) {
+    CommentDto commentUpdated = commentService.updateComment(commentId, req);
     return ResponseEntity.ok(commentUpdated);
+  }
+
+  @DeleteMapping("/{commentId}")
+  public ResponseEntity<Void> deleteComment (@PathVariable Long commentId) {
+    commentService.deleteComment(commentId);
+    return ResponseEntity.noContent().build();
   }
 }

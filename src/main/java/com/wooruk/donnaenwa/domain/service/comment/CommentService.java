@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 public interface CommentService {
   Page<CommentDto> getComments (CommentListRequest req);
   CommentDto createComment (CommentCreateRequest req);
-  CommentDto updateComment (CommentUpdateRequest req);
+  CommentDto updateComment (Long commentId, CommentUpdateRequest req);
+  void deleteComment (Long commentId);
 
 }

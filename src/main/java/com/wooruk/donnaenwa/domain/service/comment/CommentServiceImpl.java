@@ -20,13 +20,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
   private final CommentRepository commentRepository;
   private final MemberRepository memberRepository;
   private final PostRepository postRepository;
   private final JwtTokenProvider jwtTokenProvider;
 
-  public Page<CommentDto> getComments (CommentListRequest req) {
+  public Page<CommentDto> getComments(CommentListRequest req) {
     Long userId = jwtTokenProvider.getCurrentUserPk();
 
     Page<Comment> comments = commentRepository.getComments(req);
@@ -42,9 +42,8 @@ public class CommentServiceImpl implements CommentService{
   public CommentDto createComment(CommentCreateRequest req) {
     Member member = memberRepository.findById(jwtTokenProvider.getCurrentUserPk()).orElseThrow();
 
-    Comment.CommentBuilder commentBuilder = Comment.builder()
-        .content(req.getContent())
-        .member(member);
+    Comment.CommentBuilder commentBuilder =
+        Comment.builder().content(req.getContent()).member(member);
 
     if (req.getParentId() != null) {
       Comment parent = commentRepository.findById(req.getParentId()).orElseThrow();
@@ -61,11 +60,11 @@ public class CommentServiceImpl implements CommentService{
   }
 
   @Override
-  public CommentDto updateComment(CommentUpdateRequest req) {
+  public CommentDto updateComment(Long commentId, CommentUpdateRequest req) {
     Long curUserId = jwtTokenProvider.getCurrentUserPk();
-    Comment comment = commentRepository.findById(req.getCommentId()).orElseThrow();
+    Comment comment = commentRepository.findById(commentId).orElseThrow();
 
-    if (! comment.getMember().getId().equals(curUserId)) {
+    if (!comment.getMember().getId().equals(curUserId)) {
       throw new AccessDeniedException("NOT_OWNER");
     }
 
@@ -75,18 +74,24 @@ public class CommentServiceImpl implements CommentService{
     return convertToCommentDto(curUserId, comment);
   }
 
-  public CommentDto convertToCommentDto (Long userId, Comment comment) {
+  @Override
+  public void deleteComment(Long commentId) {
+    Long curUserId = jwtTokenProvider.getCurrentUserPk();
+    Comment comment = commentRepository.findById(commentId).orElseThrow();
+
+    if (comment.getMember().getId().equals(curUserId)) {
+      throw new AccessDeniedException("NOT_OWNER");
+    }
+
+    commentRepository.delete(comment);
+  }
+
+  public CommentDto convertToCommentDto(Long userId, Comment comment) {
     boolean isOwner = comment.getMember().getId().equals(userId);
 
-    return CommentDto.builder()
-        .id(comment.getId())
-        .content(comment.getContent())
-        .memberId(comment.getMember().getId())
-        .membername(comment.getMember().getMembername())
-        .createdAt(comment.getCreatedAt())
-        .likes(comment.getLikes())
-        .isEditable(isOwner)
-        .isDeletable(isOwner)
-        .build();
+    return CommentDto.builder().id(comment.getId()).content(comment.getContent())
+        .memberId(comment.getMember().getId()).membername(comment.getMember().getMembername())
+        .createdAt(comment.getCreatedAt()).likes(comment.getLikes()).isEditable(isOwner)
+        .isDeletable(isOwner).build();
   }
 }

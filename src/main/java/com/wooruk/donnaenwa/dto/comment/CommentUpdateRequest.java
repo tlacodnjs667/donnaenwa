@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonDeserialize(builder = CommentUpdateRequest.CommentUpdateRequestBuilder.class)
 public class CommentUpdateRequest {
-  private Long commentId;
   private String content;
 }
