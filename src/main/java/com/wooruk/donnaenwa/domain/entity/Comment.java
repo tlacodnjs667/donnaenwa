@@ -2,7 +2,9 @@ package com.wooruk.donnaenwa.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -24,7 +26,8 @@ public class Comment {
   private String content;
 
   @ManyToOne
-  @JoinColumn(name = "member_id")
+  @JoinColumn(name = "member_id", nullable = false)
+  @JsonIgnore
   private Member member;
 
   @ManyToOne
@@ -38,8 +41,13 @@ public class Comment {
   private Comment parent;
 
   @CreationTimestamp
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
+  @ColumnDefault("0")
+  private Integer likes;
+
+  @JsonIgnore
   @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Comment> children = new ArrayList<>(); // 자식 댓글 목록
 }
