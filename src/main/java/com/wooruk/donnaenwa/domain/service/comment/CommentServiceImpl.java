@@ -26,24 +26,21 @@ public class CommentServiceImpl implements CommentService {
   private final PostRepository postRepository;
   private final JwtTokenProvider jwtTokenProvider;
 
-  public Page<CommentDto> getComments(CommentListRequest req) {
-    Long userId = jwtTokenProvider.getCurrentUserPk();
-
+  public Page<CommentDto> getComments(Long memberId, CommentListRequest req) {
     Page<Comment> comments = commentRepository.getComments(req);
 
     if (comments == null) {
       return null;
     }
 
-    return comments.map(comment -> convertToCommentDto(userId, comment));
+    return comments.map(comment -> convertToCommentDto(memberId, comment));
   }
 
   @Override
-  public CommentDto createComment(CommentCreateRequest req) {
-    Member member = memberRepository.findById(jwtTokenProvider.getCurrentUserPk()).orElseThrow();
+  public CommentDto createComment(Long memberId, CommentCreateRequest req) {
 
-    Comment.CommentBuilder commentBuilder =
-        Comment.builder().content(req.getContent()).member(member);
+    Member member = memberRepository.findById(memberId).orElseThrow();
+    Comment.CommentBuilder commentBuilder = Comment.builder().content(req.getContent()).member(member);
 
     if (req.getParentId() != null) {
       Comment parent = commentRepository.findById(req.getParentId()).orElseThrow();
@@ -60,34 +57,32 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public CommentDto updateComment(Long commentId, CommentUpdateRequest req) {
-    Long curUserId = jwtTokenProvider.getCurrentUserPk();
+  public CommentDto updateComment(Long memberId, Long commentId, CommentUpdateRequest req) {
     Comment comment = commentRepository.findById(commentId).orElseThrow();
 
-    if (!comment.getMember().getId().equals(curUserId)) {
+    if (!comment.getMember().getId().equals(memberId)) {
       throw new AccessDeniedException("NOT_OWNER");
     }
 
     comment.updateContent(req.getContent());
 
     commentRepository.save(comment);
-    return convertToCommentDto(curUserId, comment);
+    return convertToCommentDto(memberId, comment);
   }
 
   @Override
-  public void deleteComment(Long commentId) {
-    Long curUserId = jwtTokenProvider.getCurrentUserPk();
+  public void deleteComment(Long memberId, Long commentId) {
     Comment comment = commentRepository.findById(commentId).orElseThrow();
 
-    if (comment.getMember().getId().equals(curUserId)) {
+    if (comment.getMember().getId().equals(memberId)) {
       throw new AccessDeniedException("NOT_OWNER");
     }
 
     commentRepository.delete(comment);
   }
 
-  public CommentDto convertToCommentDto(Long userId, Comment comment) {
-    boolean isOwner = comment.getMember().getId().equals(userId);
+  public CommentDto convertToCommentDto(Long memberId, Comment comment) {
+    boolean isOwner = comment.getMember().getId().equals(memberId);
 
     return CommentDto.builder().id(comment.getId()).content(comment.getContent())
         .memberId(comment.getMember().getId()).membername(comment.getMember().getMembername())

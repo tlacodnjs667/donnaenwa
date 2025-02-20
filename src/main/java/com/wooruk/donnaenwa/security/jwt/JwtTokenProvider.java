@@ -70,17 +70,4 @@ public class JwtTokenProvider {
     return false;
   }
 
-  public Long getCurrentUserPk() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication != null && authentication.isAuthenticated()) {
-      Object principal = authentication.getPrincipal();
-      if (principal instanceof DonnaenwaUserDetails) {
-        DonnaenwaUserDetails userDetails = (DonnaenwaUserDetails) principal;
-        return userDetails.getId();
-      }
-    }
-
-    return null;
-  }
 }

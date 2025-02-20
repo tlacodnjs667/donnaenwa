@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface PostService {
-  PostListResponse getPostsListByCondition(PostListRequest req);
+  PostListResponse getPostsListByCondition(Long memberId, PostListRequest req);
 
-  PostResponseDto createPost(PostCreateRequest req) throws AccessDeniedException;
+  PostResponseDto createPost(Long memberId, PostCreateRequest req) throws AccessDeniedException;
 
-  PostResponseDto getPost(Long postId);
+  PostResponseDto getPost(Long memberId, Long postId);
 
-  PostResponseDto updatePost(Long postId, PostPatchRequest req) throws AccessDeniedException;
+  PostResponseDto updatePost(Long memberId, Long postId, PostPatchRequest req) throws AccessDeniedException;
 
-  void deletePost(Long postId) throws AccessDeniedException;
+  void deletePost(Long memberId, Long postId) throws AccessDeniedException;
 }
