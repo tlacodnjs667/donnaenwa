@@ -9,10 +9,12 @@ import com.wooruk.donnaenwa.domain.repository.post.PostRepository;
 import com.wooruk.donnaenwa.dto.comment.CommentCreateRequest;
 import com.wooruk.donnaenwa.dto.comment.CommentDto;
 import com.wooruk.donnaenwa.dto.comment.CommentListRequest;
+import com.wooruk.donnaenwa.dto.comment.CommentUpdateRequest;
 import com.wooruk.donnaenwa.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -56,6 +58,21 @@ public class CommentServiceImpl implements CommentService{
     commentRepository.save(commentToSave);
 
     return convertToCommentDto(member.getId(), commentToSave);
+  }
+
+  @Override
+  public CommentDto updateComment(CommentUpdateRequest req) {
+    Long curUserId = jwtTokenProvider.getCurrentUserPk();
+    Comment comment = commentRepository.findById(req.getCommentId()).orElseThrow();
+
+    if (! comment.getMember().getId().equals(curUserId)) {
+      throw new AccessDeniedException("NOT_OWNER");
+    }
+
+    comment.updateContent(req.getContent());
+
+    commentRepository.save(comment);
+    return convertToCommentDto(curUserId, comment);
   }
 
   public CommentDto convertToCommentDto (Long userId, Comment comment) {

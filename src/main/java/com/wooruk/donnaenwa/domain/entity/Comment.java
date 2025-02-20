@@ -50,4 +50,8 @@ public class Comment {
   @JsonIgnore
   @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Comment> children = new ArrayList<>(); // 자식 댓글 목록
+
+  public void updateContent (String content) {
+    this.content = content;
+  }
 }

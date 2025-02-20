@@ -4,6 +4,7 @@ import com.wooruk.donnaenwa.domain.service.comment.CommentService;
 import com.wooruk.donnaenwa.dto.comment.CommentCreateRequest;
 import com.wooruk.donnaenwa.dto.comment.CommentDto;
 import com.wooruk.donnaenwa.dto.comment.CommentListRequest;
+import com.wooruk.donnaenwa.dto.comment.CommentUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -39,4 +40,9 @@ public class CommentController {
     return ResponseEntity.created(uri).body(comment);
   }
 
+  @PatchMapping
+  public ResponseEntity<CommentDto> updateComment (CommentUpdateRequest req) {
+    CommentDto commentUpdated = commentService.updateComment(req);
+    return ResponseEntity.ok(commentUpdated);
+  }
 }
