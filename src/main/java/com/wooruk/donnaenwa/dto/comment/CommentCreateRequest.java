@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonDeserialize(builder = CommentCreateResponse.CommentCreateResponseBuilder.class)
-public class CommentCreateResponse {
+@JsonDeserialize(builder = CommentCreateRequest.CommentCreateRequestBuilder.class)
+public class CommentCreateRequest {
   private String content;
   private Long postId;
   private Long parentId;

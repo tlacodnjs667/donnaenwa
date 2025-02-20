@@ -17,4 +17,6 @@ public class CommentDto {
   private String membername;
   private LocalDateTime createdAt;
   private Integer likes;
+  private boolean isEditable;
+  private boolean isDeletable;
 }

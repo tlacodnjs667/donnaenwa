@@ -6,7 +6,7 @@ import com.wooruk.donnaenwa.domain.entity.Post;
 import com.wooruk.donnaenwa.domain.repository.MemberRepository;
 import com.wooruk.donnaenwa.domain.repository.comment.CommentRepository;
 import com.wooruk.donnaenwa.domain.repository.post.PostRepository;
-import com.wooruk.donnaenwa.dto.comment.CommentCreateResponse;
+import com.wooruk.donnaenwa.dto.comment.CommentCreateRequest;
 import com.wooruk.donnaenwa.dto.comment.CommentDto;
 import com.wooruk.donnaenwa.dto.comment.CommentListRequest;
 import com.wooruk.donnaenwa.security.jwt.JwtTokenProvider;
@@ -25,17 +25,19 @@ public class CommentServiceImpl implements CommentService{
   private final JwtTokenProvider jwtTokenProvider;
 
   public Page<CommentDto> getComments (CommentListRequest req) {
+    Long userId = jwtTokenProvider.getCurrentUserPk();
+
     Page<Comment> comments = commentRepository.getComments(req);
 
     if (comments == null) {
       return null;
     }
 
-    return comments.map(this::convertToCommentDto);
+    return comments.map(comment -> convertToCommentDto(userId, comment));
   }
 
   @Override
-  public CommentDto createComment(CommentCreateResponse req) {
+  public CommentDto createComment(CommentCreateRequest req) {
     Member member = memberRepository.findById(jwtTokenProvider.getCurrentUserPk()).orElseThrow();
 
     Comment.CommentBuilder commentBuilder = Comment.builder()
@@ -53,10 +55,12 @@ public class CommentServiceImpl implements CommentService{
     Comment commentToSave = commentBuilder.build();
     commentRepository.save(commentToSave);
 
-    return convertToCommentDto(commentToSave);
+    return convertToCommentDto(member.getId(), commentToSave);
   }
 
-  public CommentDto convertToCommentDto (Comment comment) {
+  public CommentDto convertToCommentDto (Long userId, Comment comment) {
+    boolean isOwner = comment.getMember().getId().equals(userId);
+
     return CommentDto.builder()
         .id(comment.getId())
         .content(comment.getContent())
@@ -64,6 +68,8 @@ public class CommentServiceImpl implements CommentService{
         .membername(comment.getMember().getMembername())
         .createdAt(comment.getCreatedAt())
         .likes(comment.getLikes())
+        .isEditable(isOwner)
+        .isDeletable(isOwner)
         .build();
   }
 }

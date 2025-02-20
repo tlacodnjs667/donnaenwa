@@ -1,8 +1,7 @@
 package com.wooruk.donnaenwa.controller;
 
-import com.wooruk.donnaenwa.domain.entity.Comment;
 import com.wooruk.donnaenwa.domain.service.comment.CommentService;
-import com.wooruk.donnaenwa.dto.comment.CommentCreateResponse;
+import com.wooruk.donnaenwa.dto.comment.CommentCreateRequest;
 import com.wooruk.donnaenwa.dto.comment.CommentDto;
 import com.wooruk.donnaenwa.dto.comment.CommentListRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,7 @@ public class CommentController {
   }
 
   @PostMapping
-  public ResponseEntity<CommentDto> createComment (CommentCreateResponse req) {
-
+  public ResponseEntity<CommentDto> createComment (CommentCreateRequest req) {
 
     CommentDto comment = commentService.createComment(req);
 
