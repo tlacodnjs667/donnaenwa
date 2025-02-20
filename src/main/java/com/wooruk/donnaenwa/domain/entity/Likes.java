@@ -1,9 +1,14 @@
 package com.wooruk.donnaenwa.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Entity
-public class Like {
+public class Likes {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
