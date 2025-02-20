@@ -7,8 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Entity
-public class Likes {
+@Entity(name = "likes")
+public class Like {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
